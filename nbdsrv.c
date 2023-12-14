@@ -91,6 +91,7 @@ bool address_matches(const char* mask, const struct sockaddr* addr, GError** err
 				/* Map res to IPv6 for comparison */
 				memcpy(&ipv4_mapped[IPV4_MAP_PREFIX], &(((struct sockaddr_in*)(res->ai_addr))->sin_addr), 4);
 				byte_t = &ipv4_mapped[0];
+				len_left += IPV4_MAP_PREFIX * 8;
 				break;
 			}
 		}
@@ -323,4 +324,8 @@ SERVER* serve_dec_ref(SERVER *s) {
 	}
 	pthread_mutex_unlock(&cntmutex);
 	return s;
+}
+
+void serve_clear_element(SERVER **server) {
+	serve_dec_ref(*server);
 }

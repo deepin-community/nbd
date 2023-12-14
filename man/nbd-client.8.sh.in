@@ -58,7 +58,7 @@ The following options are supported:
 \fB-block-size \fIblock size\fB\fR
 .TP
 \fB-b\fR
-Use a blocksize of "block size". Default is 1024;
+Use a blocksize of "block size". Default is 512;
 allowed values are either 512, 1024, 2048 or 4096
 .TP
 \fB-connections \fInum\fB\fR

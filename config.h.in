@@ -86,9 +86,6 @@
 /* Define to 1 if we have netlink support */
 #undef HAVE_NETLINK
 
-/* Define to 1 if you have an old glib library */
-#undef HAVE_OLD_GLIB
-
 /* Define to 1 if you have the `socket' function. */
 #undef HAVE_SOCKET
 
@@ -230,9 +227,6 @@
 
 /* Version number of package */
 #undef VERSION
-
-/* Define to 1 if you have and want support for the Socket Direct Protocol */
-#undef WITH_SDP
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
