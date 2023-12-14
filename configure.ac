@@ -2,7 +2,7 @@ dnl Configure script for NBD system
 dnl (c) 1998 Martin Mares <mj@ucw.cz>, (c) 2000 Pavel Machek <pavel@ucw.cz>,
 dnl (c) 2003-2006 Wouter Verhelst <wouter@debian.org>
 AC_INIT([nbd],
-  [3.22],
+  [3.24],
   [nbd@other.debian.org],,
   [http://nbd.sourceforge.net/])
 m4_define([serial_tests], [
@@ -85,16 +85,6 @@ else
 fi
 
 AC_ARG_ENABLE(
-  sdp,
-  AS_HELP_STRING([--enable-sdp],[Build a version of nbd-server with support for the Socket Direct Protocol (SDP). Requires you to build and install a kernel with the InfiniBand patches (default disabled)]),
-  [
-    if test "x$enableval" = "xyes"; then
-      AC_DEFINE(WITH_SDP, 1, [Define to 1 if you have and want support for the Socket Direct Protocol])
-    fi
-  ]
-)
-
-AC_ARG_ENABLE(
   [gznbd],
   [AS_HELP_STRING([--enable-gznbd],[Build gznbd too (nbd server with on-the-fly decompression of images. NOTE: no support for newstyle protocol.)])],
   [
@@ -107,7 +97,7 @@ AC_ARG_ENABLE(
   [ENABLE_GZNBD=no]
 )
 
-AC_PROG_CC_C99
+AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AM_PROG_LEX(noyywrap)
@@ -267,7 +257,6 @@ AC_CHECK_FUNC([sync_file_range],
 	[AC_DEFINE([HAVE_SYNC_FILE_RANGE], [sync_file_range(2) is not supported], [sync_file_range(2) is supported])],
         [])
 AC_FUNC_FORK
-AC_FUNC_SETVBUF_REVERSED
 AC_MSG_CHECKING(whether client should be built)
 AS_CASE([$host_os],
   [linux*], [NBD_CLIENT_NAME="nbd-client"; AC_MSG_RESULT(yes)],
@@ -287,25 +276,15 @@ AC_CHECK_HEADERS([sys/mount.h],,,
 [[#include <sys/param.h>
 ]])
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h netdb.h netinet/in.h sys/ioctl.h sys/socket.h syslog.h linux/types.h sys/dirent.h sys/uio.h])
-PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.26.0 gthread-2.0 >= 2.26.0], [HAVE_GLIB=yes], AC_MSG_ERROR([Missing glib]))
+PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.32.0 gthread-2.0 >= 2.32.0], [HAVE_GLIB=yes], AC_MSG_ERROR([Missing glib]))
+#PKG_CHECK_MODULES(SW, [socket_wrapper], [HAVE_SW=yes], [HAVE_SW=no])
+#PKG_CHECK_MODULES(NW, [nss_wrapper], [HAVE_NW=yes], [HAVE_NW=no])
+#AM_CONDITIONAL(CWRAP, test "$HAVE_SW" = "yes" -a "$HAVE_NW" = "yes")
 
 my_save_cflags="$CFLAGS"
 my_save_libs="$LIBS"
 CFLAGS="-Wdeprecated-declarations -Werror $GLIB_CFLAGS"
 LIBS="$GLIB_LIBS"
-AC_MSG_CHECKING([if we are using an old glib 2.0 library])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
-	[[#include <glib.h>]],
-	[[g_thread_init(NULL);]])],
-	[
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_OLD_GLIB, 1, [Define to 1 if you have an old glib library])
-	],
-	[
-		AC_MSG_RESULT(no)
-		AC_DEFINE(HAVE_OLD_GLIB, 0, [Define to 1 if you have an old glib library])
-	]
-)
 dnl g_memdup2 added in glib-2.68
 AC_CHECK_FUNCS([g_memdup2])
 CFLAGS="$my_save_cflags"
@@ -354,6 +333,7 @@ AS_IF([test "x$enable_manpages" != "xno"], [
 		man/nbd-server.5.sh \
 		man/nbd-server.1.sh \
 		man/nbd-trdump.1.sh \
+		man/nbd-trplay.1.sh \
 		man/nbdtab.5.sh \
 		"])
 	])
@@ -381,6 +361,7 @@ AC_CONFIG_FILES([Makefile
                  man/nbd-server.5.sh
                  man/nbd-server.1.sh
                  man/nbd-trdump.1.sh
+                 man/nbd-trplay.1.sh
                  man/nbdtab.5.sh
 		 systemd/Makefile
 		 systemd/nbd@.service.sh

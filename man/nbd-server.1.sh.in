@@ -16,7 +16,7 @@ cat <<EOF
 nbd-server \- serve a file as a block device to other computers    running the GNU/Linux(tm) or GNU/Hurd Operating    System
 .SH SYNOPSIS
 
-\fBnbd-server \fR \fB\fI[ip@]port\fB\fR \fB\fIfilename\fB\fR [ \fB\fIsize\fB\fR ] [ \fB-r\fR ] [ \fB-m\fR ] [ \fB-c\fR ] [ \fB-l \fIhost list filename\fB\fR ] [ \fB-o \fIsection name\fB\fR ] [ \fB-C \fIconfig file\fB\fR ] [ \fB-M \fImax connections\fB\fR ] [ \fB-V\fR ] [ \fB-d\fR ]
+\fBnbd-server \fR \fB\fI[ip@]port\fB\fR \fB\fIfilename\fB\fR [ \fB\fIsize\fB\fR ] [ \fB-r\fR ] [ \fB-m\fR ] [ \fB-c\fR ] [ \fB-l \fIhost list filename\fB\fR ] [ \fB-o \fIsection name\fB\fR ] [ \fB-C \fIconfig file\fB\fR ] [ \fB-M \fImax connections\fB\fR ] [ \fB-V\fR ] [ \fB-n\fR ] [ \fB-d\fR ]
 
 .SH "DESCRIPTION"
 .PP
@@ -145,8 +145,14 @@ parameter is not specified, no limit is set.
 \fB-V\fR
 Output the version of nbd-server, and exit.
 .TP
+\fB-n\fR
+Do not daemonize the main process. In contrast
+to \fB-d\fR, this still allows to fork the
+serving process for a client from the main process.
+.TP
 \fB-d\fR
 Do not fork. Useful for debugging.
+Implies \fB-n\fR\&.
 .TP
 \fBhost list filename\fR
 This argument should contain a list of IP-addresses
